@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Itinerary Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #6a11cb;
+        }
+        
+        button {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2575fc;
+        }
+        
+        .places-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .place-tag {
+            background: #eef4ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .place-tag span {
+            cursor: pointer;
+            color: #ff4757;
+        }
+        
+        .generate-btn {
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            align-self: center;
+        }
+        
+        .itinerary-section {
+            display: none;
+        }
+        
+        .itinerary-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .itinerary-header h2 {
+            color: #6a11cb;
+        }
+        
+        .days-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+        
+        .day-card {
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .day-header {
+            color: #2575fc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #ddd;
+        }
+        
+        .activity {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-time {
+            font-weight: bold;
+            color: #6a11cb;
+            margin-right: 10px;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+        }
+        
+        .activity-desc {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .secondary-btn {
+            background: #eef4ff;
+            color: #2575fc;
+            border-radius: 8px;
+        }
+        
+        .secondary-btn:hover {
+            background: #dfe6f5;
+        }
+        
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input {
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+            
+            button {
+                border-radius: 8px;
+                padding: 15px;
+            }
+            
+            .days-container {
+                flex-direction: column;
+            }
+            
+            .day-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Travel Itinerary Generator</h1>
+            <p>Plan your perfect trip with detailed, personalized itineraries based on your desired destinations</p>
+        </header>
+        
+        <section class="card input-section">
+            <h2>Where would you like to go?</h2>
+            <p>Enter the places you want to visit, and we'll create a detailed itinerary for you</p>
+            
+            <div class="input-group">
+                <input type="text" id="place-input" placeholder="Enter a destination (e.g., Paris, France)">
+                <button id="add-place"><i class="fas fa-plus"></i> Add</button>
+            </div>
+            
+            <div class="places-list" id="places-container">
+                <!-- Places will be added here dynamically -->
+            </div>
+            
+            <button class="generate-btn" id="generate-btn"><i class="fas fa-magic"></i> Generate Itinerary</button>
+        </section>
+        
+        <section class="card itinerary-section" id="itinerary-section">
+            <div class="itinerary-header">
+                <h2>Your Personalized Itinerary</h2>
+            </div>
+            
+            <div class="days-container" id="days-container">
+                <!-- Itinerary days will be added here dynamically -->
+            </div>
+            
+            <div class="action-buttons">
+                <button class="secondary-btn" id="edit-btn"><i class="fas fa-edit"></i> Edit Places</button>
+                <button class="generate-btn" id="save-btn"><i class="fas fa-download"></i> Save Itinerary</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const placeInput = document.getElementById('place-input');
+            const addPlaceBtn = document.getElementById('add-place');
+            const generateBtn = document.getElementById('generate-btn');
+            const editBtn = document.getElementById('edit-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const placesContainer = document.getElementById('places-container');
+            const itinerarySection = document.getElementById('itinerary-section');
+            const daysContainer = document.getElementById('days-container');
+            
+            let places = [];
+            
+            // Add place to list
+            addPlaceBtn.addEventListener('click', function() {
+                const place = placeInput.value.trim();
+                if (place && !places.includes(place)) {
+                    places.push(place);
+                    renderPlaces();
+                    placeInput.value = '';
+                }
+            });
+            
+            // Generate itinerary
+            generateBtn.addEventListener('click', function() {
+                if (places.length === 0) {
+                    alert('Please add at least one place to generate an itinerary');
+                    return;
+                }
+                
+                generateItinerary();
+                itinerarySection.style.display = 'block';
+                
+                // Scroll to itinerary
+                itinerarySection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Edit places
+            editBtn.addEventListener('click', function() {
+                itinerarySection.style.display = 'none';
+            });
+            
+            // Save itinerary (mock functionality)
+            saveBtn.addEventListener('click', function() {
+                alert('Itinerary saved successfully! You can print this page or take a screenshot.');
+            });
+            
+            // Render places as tags
+            function renderPlaces() {
+                placesContainer.innerHTML = '';
+                places.forEach((place, index) => {
+                    const tag = document.createElement('div');
+                    tag.className = 'place-tag';
+                    tag.innerHTML = `
+                        ${place}
+                        <span class="remove-place" data-index="${index}"><i class="fas fa-times"></i></span>
+                    `;
+                    placesContainer.appendChild(tag);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-place').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        places.splice(index, 1);
+                        renderPlaces();
+                    });
+                });
+            }
+            
+            // Generate sample itinerary
+            function generateItinerary() {
+                daysContainer.innerHTML = '';
+                
+                // For demo purposes, create 3-day itineraries for up to 3 places
+                const days = Math.min(places.length, 3);
+                
+                for (let i = 0; i < days; i++) {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'day-card';
+                    
+                    dayCard.innerHTML = `
+                        <h3 class="day-header">Day ${i+1}: ${places[i]}</h3>
+                        <div class="activity">
+                            <span class="activity-time">9:00 AM</span>
+                            <span class="activity-title">Breakfast at Local Cafe</span>
+                            <p class="activity-desc">Start your day with traditional local cuisine and coffee.</p>
+                        </div>
+                        <div class="activity">
+                            <span class="activity-time">10:30 AM</span>
+                            <span class="activity-title">Explore Main Attraction</span>
+                            <p class="activity-desc">Visit the most famous landmark in ${places[i]} with a guided tour.</p>
+                        </div>
+                        <div class="activity">
+                            <span class="activity-time">1:00 PM</span>
+                            <span class="activity-title">Lunch at Recommended Restaurant</span>
+                            <p class="activity-desc">Enjoy authentic local dishes at a highly-rated restaurant.</p>
+                        </div>
+                        <div class="activity">
+                            <span class="activity-time">3:00 PM</span>
+                            <span class="activity-title">Cultural Experience</span>
+                            <p class="activity-desc">Visit museums or cultural sites to learn about local history.</p>
+                        </div>
+                        <div class="activity">
+                            <span class="activity-time">7:00 PM</span>
+                            <span class="activity-title">Dinner and Free Time</span>
+                            <p class="activity-desc">Enjoy dinner at your leisure and explore the local nightlife.</p>
+                        </div>
+                    `;
+                    
+                    daysContainer.appendChild(dayCard);
+                }
+            }
+            
+            // Allow adding places with Enter key
+            placeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addPlaceBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
